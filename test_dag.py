@@ -1,22 +1,15 @@
 from datetime import datetime
-
 from airflow import DAG
-from airflow.operators.bash_operator import BashOperator
+from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators.python_operator import PythonOperator
 
+def print_hello():
+    return 'Hello world from first Airflow DAG!'
 
-dag = DAG(
-    'test_dag',
-    description='Тестируем git-sync',
-    schedule_interval=None,
-    start_date=datetime(2023, 11, 15),
-    catchup=False
-)
+dag = DAG('hello_world', description='Hello World DAG',
+          schedule_interval='0 12 * * *',
+          start_date=datetime(2017, 3, 20), catchup=False)
 
+hello_operator = PythonOperator(task_id='hello_task', python_callable=print_hello, dag=dag)
 
-hello_world_task = BashOperator(
-    task_id='hello_world_task',
-    bash_command='echo Hello world!',
-    dag=dag
-)
-
-hello_world_task
+hello_operator
